@@ -1,5 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+
+const pageSizes = [2, 4, 6, 8, 10]
+const pageSize = ref(pageSizes[1])
+
+const router = useRouter()
+const route = useRoute()
+
+const updatePageSize = () => {
+  router.push({
+    name: 'event-list-view',
+    query: { ...route.query, pageSize: pageSize.value, page: 1 }
+  })
+}
+if (route.query.pageSize) {
+  pageSize.value = parseInt(route.query.pageSize.toString())
+}
 </script>
 
 <template>
@@ -11,6 +29,12 @@ import { RouterLink, RouterView } from 'vue-router'
           <RouterLink :to="{ name: 'about' }">About</RouterLink>
           <RouterLink :to="{ name: 'student-list-view' }">Student</RouterLink>
         </nav>
+        <div>
+          <label for="page-size">Events per page: </label>
+          <select id="page-size" v-model="pageSize" @change="updatePageSize">
+            <option v-for="size in pageSizes" :key="size" :value="size">{{ size }}</option>
+          </select>
+        </div>
       </div>
     </header>
 
